@@ -90,6 +90,7 @@ function startGame() {
     // loop through each card and create its HTML, dinamically add each card's HTML to the page
     for (var index = 0; index < tiles.length; index++) {
         // Define variable for the cards inside tiles elements 
+        //var cards = ' class="card-face" src="img/' + tiles[index] + '" alt="card tiles images"';
         var cards = ' class="card-face" src="img/tile_back.png" alt="card tiles images"';    
         // Define variable that will make the card tiles clickable
         var clickable = ' onclick="clickHandler(\'' + tiles[index] + '\', \'' + index + '\', this)"';
@@ -122,9 +123,11 @@ function clickHandler(clickable, index, info) {
         // Perform marching comparisson on selected pair of cards
         if (revealedCards === 2) {
             if (matchingCards[0] === matchingCards[1]) {
-                selectNewMatchingPair();
+                //selectNewMatchingPair();
                 // Tracking scores
                 score++;
+                // Make card tiles unclickable
+                unmatchingCards();
                 // Check for game over
                 if ((tiles.length / 2) <= score) {
                     $('#myModal').modal({ show: false})
@@ -132,9 +135,10 @@ function clickHandler(clickable, index, info) {
                     modalContent.innerHTML += 'Your time: ' + timeCounter.innerHTML + '<br>Number of Moves: ' + movesCounter + '<br>Rating: ' + rating;
                     clearTimeout(time);
                 }
+                //selectNewMatchingPair();
             } else {
                 // Set up a time interval before tiles go back to unrevealed after half a sec
-                stopInterval = setInterval(unmatchingCards, 500);
+                stopInterval = setInterval(unrevealedCards, 500);
             }
         }
     lastCardClicked = index;
@@ -143,9 +147,23 @@ function clickHandler(clickable, index, info) {
 
 
 /*
- * @description Manage unmatched card tiles
+ * @description Manage matched card tiles
  */
 function unmatchingCards() {
+    //console.log("INSIDE unmatchingCards");
+    // Remove card tile onclick attribute
+    document.getElementById(matchingCards[2]).removeAttribute('onclick');
+    document.getElementById(matchingCards[3]).removeAttribute('onclick');
+    document.getElementById(matchingCards[2]).setAttribute('class', 'card-matched');
+    document.getElementById(matchingCards[3]).setAttribute('class', 'card-matched');
+    selectNewMatchingPair();
+}
+
+
+/*
+ * @description Manage revealed card tiles
+ */
+function unrevealedCards() {
     // Reset card tile back to unrevealed card image
     document.getElementById(matchingCards[2]).src = "img/tile_back.png";
     document.getElementById(matchingCards[3]).src = "img/tile_back.png";
